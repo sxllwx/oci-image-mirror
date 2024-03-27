@@ -1,0 +1,28 @@
+apiVersion: apiregistration.k8s.io/v1
+kind: APIService
+metadata:
+  name: v1alpha1.transportation.sample.io
+spec:
+  insecureSkipTLSVerify: true
+  group: transportation.sample.io
+  groupPriorityMinimum: 1000
+  versionPriority: 15
+  service:
+    name: api
+    namespace: sample
+  version: v1alpha1
+
+---
+apiVersion: apiregistration.k8s.io/v1
+kind: APIService
+metadata:
+  name: v1alpha2.transportation.sample.io
+spec:
+  insecureSkipTLSVerify: true
+  group: transportation.sample.io
+  groupPriorityMinimum: 1000
+  versionPriority: 15
+  service:
+    name: api
+    namespace: sample
+  version: v1alpha2

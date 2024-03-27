@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hook
+  namespace: sample
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hook
+  template:
+    metadata:
+      labels:
+        app: hook
+    spec:
+      serviceAccountName: hook
+      containers:
+        - image: ghcr.io/sxllwx/learn-from-test/admission-webhook
+          imagePullPolicy: Always
+          name: app
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hook
+  namespace: sample
+spec:
+  ports:
+    - port: 443
+      targetPort: 443
+      protocol: TCP
+  selector:
+    app: hook
