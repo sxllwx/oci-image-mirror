@@ -16,7 +16,7 @@ spec:
         - image: ghcr.io/sxllwx/oci-image-mirror
           name: app
           args:
-            - "-c /etc/oci-image-mirror/config.yaml"
+            - --config=/etc/oci-image-mirror/config.yaml
           imagePullPolicy: Always
           resources:
             limits:
