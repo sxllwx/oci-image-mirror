@@ -23,8 +23,7 @@ type WorkerConfiguration struct {
 type RegistryName = string
 
 type RegistryConfiguration struct {
-	Name  RegistryName `json:"name,omitempty"`
-	Basic *Basic       `json:"basic,omitempty" yaml:"basic,omitempty"`
+	Basic *Basic `json:"basic,omitempty" yaml:"basic,omitempty"`
 }
 
 type Basic struct {
