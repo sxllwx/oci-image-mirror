@@ -23,7 +23,7 @@ spec:
               cpu: "1"
               memory: "1Gi"
           volumeMounts:
-          - mountPath: /etc/oci-image-mirror/config.yaml
+          - mountPath: /etc/oci-image-mirror/
             name: config
       volumes:
         - name: config
