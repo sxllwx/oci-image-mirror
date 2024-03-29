@@ -1,9 +1,0 @@
-apiVersion: transportation.sample.io/v1alpha1
-kind: Car
-metadata:
-  name: volvo-s60
-  namespace: default
-spec:
-  class: C-Class
-  power: gasoline-powered
-  color: black

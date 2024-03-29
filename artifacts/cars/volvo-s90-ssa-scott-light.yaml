@@ -1,9 +1,0 @@
-apiVersion: transportation.sample.io/v1alpha2
-kind: Car
-metadata:
-  name: volvo-s90
-spec:
-  ambientLights:
-    - color: yellow
-      name: scott
-# kubectl apply -f ./volvo-s90-ssa-scott-light.yaml --server-side=true --field-manager='a' --force-conflicts

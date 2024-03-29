@@ -1,9 +1,0 @@
-apiVersion: transportation.sample.io/v1alpha2
-kind: Car
-metadata:
-  name: volvo-s90
-spec:
-  ambientLights:
-    - color: red
-      name: wang
-# kubectl apply -f ./volvo-s90-ssa-wang-light.yaml --server-side=true --field-manager='b'

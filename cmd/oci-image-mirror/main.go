@@ -10,8 +10,8 @@ import (
 )
 
 func main() {
-	options := app.NewOptions(os.Stdout, os.Stderr)
-	cmd := app.NewCommand(options, genericapiserver.SetupSignalHandler())
+	options := app.NewOptions()
+	cmd := app.NewCommand(options, genericapiserver.SetupSignalContext())
 	code := cli.Run(cmd)
 	os.Exit(code)
 }

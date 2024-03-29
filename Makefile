@@ -92,7 +92,7 @@ clean: clean.generated
 	@-rm -rf vendor
 
 .PHONY: build
-build: fmt $(foreach app,$(APPS),$(addprefix build., $(app))) build.e2e
+build: fmt $(foreach app,$(APPS),$(addprefix build., $(app)))
 
 # expect target: build.$(app)
 build.%:

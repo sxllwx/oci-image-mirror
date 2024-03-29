@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oci-image-mirror
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oci-image-mirror
+  template:
+    metadata:
+      labels:
+        app: oci-image-mirror
+    spec:
+      containers:
+        - image: ghcr.io/sxllwx/oci-image-mirror
+          name: app
+          args:
+            - "-c /etc/oci-image-mirror/config.yaml"
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          volumeMounts:
+          - mountPath: /etc/oci-image-mirror/config.yaml
+            name: config
+      volumes:
+        - name: config
+          configMap:
+            name: oci-image-mirror
+            items:
+            - key: config.yaml
+              path: config.yaml
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oci-image-mirror
+data:
+  config.yaml: |
+      auth:
+        docker.io:
+          name: docker.io
+        private-registry:
+          name: private-registry
+          basic:
+            user: user
+            pass: pass
+
+      sources:
+      - registry:  docker.io
+        namespace:
+        - library
+        name: golang
+
+      destinations:
+      - private-registry
