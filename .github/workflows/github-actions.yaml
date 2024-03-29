@@ -36,4 +36,4 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - run: RELEASE=1 make image
+      - run: RELEASE=1 make image -j 16

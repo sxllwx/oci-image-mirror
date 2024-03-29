@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oci-image-mirror
+data:
+  config.yaml: |
+    auth:
+      docker.io:
+        name: docker.io
+      private-registry:
+        name: private-registry
+        basic:
+          user: user
+          pass: pass
+    
+    sources:
+      - registry:  docker.io
+        namespace:
+          - library
+        name: golang
+    
+    destinations:
+      - private-registry
