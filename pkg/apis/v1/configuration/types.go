@@ -12,7 +12,7 @@ type Configuration struct {
 type Repository struct {
 	Registry  RegistryName `json:"registry,omitempty"`
 	Namespace []string     `json:"namespace,omitempty"`
-	Name      string       `json:"name,omitempty"`
+	Names     []string     `json:"names,omitempty"`
 }
 
 type WorkerConfiguration struct {
