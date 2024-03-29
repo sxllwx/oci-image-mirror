@@ -8,7 +8,7 @@ COMMA=,#
 PROJECT_NAME=$(shell grep '^module\s\+.\+$$' go.mod|sed 's/module[[:blank:]]*//')
 HEADER_FILE_NAME := ./script/boilerplate/boilerplate.go.txt
 VERSION_PACKAGES=k8s.io/client-go/pkg/version k8s.io/component-base/version
-IMAGE_PREFIX ?= ghcr.io/sxllwx/oci-image-mirror
+IMAGE_PREFIX ?= ghcr.io/sxllwx
 
 # kubernetes versioned pkg:
 # - https://github.com/kubernetes/component-base/blob/master/version/base.go
