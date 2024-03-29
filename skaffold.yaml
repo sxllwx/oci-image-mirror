@@ -1,0 +1,19 @@
+apiVersion: skaffold/v4beta7
+kind: Config
+metadata:
+  name: learn-from-test
+build:
+  local: 
+    push: true
+    concurrency: 0
+  artifacts:
+  - image: ghcr.io/sxllwx/oci-image-mirror
+    ko:
+      fromImage: gcr.io/distroless/static:debug
+      main: ./cmd/oci-image-mirror
+      env:
+      - GOPROXY={{.GOPROXY}}
+
+manifests:
+  rawYaml:
+    - ./artifacts/oci-image-mirror/workload.yaml
