@@ -5,19 +5,23 @@ metadata:
 data:
   config.yaml: |
     auth:
-      docker.io:
-        name: docker.io
+      docker.io: {}
       private-registry:
-        name: private-registry
         basic:
           user: user
           pass: pass
-    
+          
+    worker:
+      parallel: 100
+      interval: 1h
+      
     sources:
       - registry:  docker.io
         namespace:
           - library
-        name: golang
+        names: 
+        - golang
+        - nginx
     
     destinations:
       - private-registry

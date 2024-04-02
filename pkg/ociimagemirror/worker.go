@@ -66,25 +66,27 @@ func (w *Worker) makeJob(ctx context.Context, config *configuration.Configuratio
 			if !ok {
 				return nil
 			}
-			images, err := registry.ListImages(innerCtx, mirror.Repository{
-				Registry:  src.Registry,
-				Namespace: src.Namespace,
-				Name:      src.Name,
-			})
-			if err != nil {
-				return nil
-			}
+			for _, name := range src.Names {
+				images, err := registry.ListImages(innerCtx, mirror.Repository{
+					Registry:  src.Registry,
+					Namespace: src.Namespace,
+					Name:      name,
+				})
+				if err != nil {
+					return nil
+				}
 
-			for _, image := range images {
-				for _, dst := range config.Destinations {
-					dstImage := image
-					dstImage.Registry = dst
-					// just overwrite the registry name
-					w.queue.Add(queueItem{
-						Src: newImg(image),
-						Dst: newImg(dstImage),
-					})
+				for _, image := range images {
+					for _, dst := range config.Destinations {
+						dstImage := image
+						dstImage.Registry = dst
+						// just overwrite the registry name
+						w.queue.Add(queueItem{
+							Src: newImg(image),
+							Dst: newImg(dstImage),
+						})
 
+					}
 				}
 			}
 			return nil

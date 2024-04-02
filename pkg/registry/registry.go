@@ -4,8 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
+	"sort"
+	"time"
 
+	"k8s.io/klog/v2"
+
+	"github.com/go-logr/logr"
 	"github.com/google/go-containerregistry/pkg/authn"
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/remote"
@@ -16,8 +22,9 @@ import (
 )
 
 type Registry struct {
-	Name string
-	Auth authn.Authenticator
+	logger logr.Logger
+	Name   string
+	Auth   authn.Authenticator
 }
 
 type option func(registry *Registry) error
@@ -35,9 +42,17 @@ func WithBasicAuth(basic *configuration.Basic) option {
 	}
 }
 
+func WithLogger(logger logr.Logger) option {
+	return func(registry *Registry) error {
+		registry.logger = logger
+		return nil
+	}
+}
+
 func NewRegistry(name string, opts ...option) (*Registry, error) {
 	ret := &Registry{
-		Name: name,
+		logger: klog.Background(),
+		Name:   name,
 	}
 	for _, opt := range opts {
 		err := opt(ret)
@@ -75,7 +90,26 @@ func (r *Registry) IfImageExist(ctx context.Context, image mirror.Image) (bool, 
 	return true, nil
 }
 
-func (r *Registry) ListImages(ctx context.Context, repository mirror.Repository) ([]mirror.Image, error) {
+type listOptions struct {
+	limit int
+}
+
+type ListOption func(options *listOptions)
+
+func WithLimit(limit int) func(o *listOptions) {
+	return func(o *listOptions) {
+		o.limit = limit
+	}
+}
+
+func (r *Registry) ListImages(ctx context.Context, repository mirror.Repository, opts ...ListOption) ([]mirror.Image, error) {
+	listOption := &listOptions{
+		limit: math.MaxInt,
+	}
+	for _, opt := range opts {
+		opt(listOption)
+	}
+
 	registry, err := name.NewRegistry(repository.Registry)
 	if err != nil {
 		return nil, fmt.Errorf("parse registry: %w", err)
@@ -86,11 +120,47 @@ func (r *Registry) ListImages(ctx context.Context, repository mirror.Repository)
 	if err != nil {
 		return nil, fmt.Errorf("list repository: %w", err)
 	}
-	var ret []mirror.Image
+
+	var images []struct {
+		tag        string
+		createTime time.Time
+	}
 	for _, tag := range tags {
+		// read image manifest
+		image, err := remote.Image(repo.Tag(tag), remote.WithAuth(r.Auth), remote.WithContext(ctx))
+		if err != nil {
+			r.logger.Error(err, "inspect image", "image", repo.Tag(tag))
+			continue
+		}
+
+		config, err := image.ConfigFile()
+		if err != nil {
+			r.logger.Error(err, "config file", "image", repo.Tag(tag))
+			continue
+		}
+		images = append(images, struct {
+			tag        string
+			createTime time.Time
+		}{
+			tag:        tag,
+			createTime: config.Created.Time,
+		})
+	}
+
+	// sort by create time
+	sort.Slice(images, func(i, j int) bool {
+		return images[i].createTime.Before(images[j].createTime)
+	})
+
+	if len(images) > listOption.limit {
+		images = images[:listOption.limit]
+	}
+
+	var ret []mirror.Image
+	for _, image := range images {
 		ret = append(ret, mirror.Image{
 			Repository: repository,
-			Tag:        tag,
+			Tag:        image.tag,
 		})
 	}
 	return ret, nil

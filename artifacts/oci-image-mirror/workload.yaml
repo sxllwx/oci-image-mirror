@@ -16,14 +16,14 @@ spec:
         - image: ghcr.io/sxllwx/oci-image-mirror
           name: app
           args:
-            - "-c /etc/oci-image-mirror/config.yaml"
+            - --config=/etc/oci-image-mirror/config.yaml
           imagePullPolicy: Always
           resources:
             limits:
               cpu: "1"
               memory: "1Gi"
           volumeMounts:
-          - mountPath: /etc/oci-image-mirror/config.yaml
+          - mountPath: /etc/oci-image-mirror/
             name: config
       volumes:
         - name: config

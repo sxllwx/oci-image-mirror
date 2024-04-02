@@ -6,7 +6,6 @@ func Default() *Configuration {
 	return &Configuration{
 		Auth: map[RegistryName]RegistryConfiguration{
 			"docker.io": {
-				Name:  "docker.io",
 				Basic: nil,
 			},
 		},

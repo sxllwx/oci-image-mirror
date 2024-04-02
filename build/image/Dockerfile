@@ -12,7 +12,6 @@ RUN apk add -U tzdata && \
       echo "Asia/Shanghai" > /etc/timezone
 
 COPY $TARGETPLATFORM/$app /app/$app
-COPY $TARGETPLATFORM/$app /usr/local/bin/$app
 
 ENV APP_NAME=$app
 
